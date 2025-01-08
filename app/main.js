@@ -11,18 +11,25 @@ const server = net.createServer((socket) => {
   });
 
   socket.on("data", (data) => {
-    const requestData = data.toString();
-    const requestLine = requestData.split("\r\n")[0];
-    const urlPath = requestLine.split(" ")[1];
-    console.log(requestLine);
-    console.log(urlPath);
+    console.log(data.toString());
+    const requestData = data.toString().split("\r\n");
+    // const requestLine = requestData.split("\r\n")[0];
+    // const headerValue = requestData.split("\r\n")[-1];
 
+    const requestLine = requestData[0];
+    const headerValue = requestData[requestData.length - 3].split(": ")[1];
+
+    const urlPath = requestLine.split(" ")[1];
     if (urlPath === "/") {
       socket.write(`HTTP/1.1 200 OK\r\n\r\n`);
     } else if (urlPath.includes("echo")) {
       const content = urlPath.split("/")[2];
       socket.write(
         `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
+      );
+    } else if (urlPath.toLowerCase().includes("user-agent")) {
+      socket.write(
+        `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${headerValue.length}\r\n\r\n${headerValue}`
       );
     } else {
       socket.write(`HTTP/1.1 404 Not Found\r\n\r\n`);
