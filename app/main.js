@@ -4,6 +4,9 @@ const fs = require("fs");
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 console.log("Logs from your program will appear here!");
 
+const flags = process.argv.slice(2);
+const directory = flags.find((_, index) => flags[index - 1] == "--directory");
+
 // Uncomment this to pass the first stage
 const server = net.createServer((socket) => {
   socket.on("close", () => {
@@ -30,7 +33,7 @@ const server = net.createServer((socket) => {
       );
     } else if (urlPath.includes("file")) {
       const fileName = urlPath.split("/")[2];
-      const directory = process.argv[3];
+      // const directory = process.argv[3];
       console.log(directory);
       fs.readFile(`${directory}/${fileName}.txt`, "utf-8", (err, data) => {
         if (err) {
