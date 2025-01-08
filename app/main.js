@@ -13,9 +13,6 @@ const server = net.createServer((socket) => {
   socket.on("data", (data) => {
     console.log(data.toString());
     const requestData = data.toString().split("\r\n");
-    // const requestLine = requestData.split("\r\n")[0];
-    // const headerValue = requestData.split("\r\n")[-1];
-
     const requestLine = requestData[0];
     const headerValue = requestData[requestData.length - 3].split(": ")[1];
 
