@@ -7,6 +7,9 @@ console.log("Logs from your program will appear here!");
 const flags = process.argv.slice(2);
 const directory = flags.find((_, index) => flags[index - 1] == "--directory");
 
+// const directory = process.argv[3];
+console.log("flags - ", flags);
+
 // Uncomment this to pass the first stage
 const server = net.createServer((socket) => {
   socket.on("close", () => {
@@ -34,12 +37,18 @@ const server = net.createServer((socket) => {
     } else if (urlPath.includes("file")) {
       const fileName = urlPath.split("/")[2];
       // const directory = process.argv[3];
+      console.log;
       console.log(directory);
+      if (!fs.existsSync(directory + fileName)) {
+        socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
+        socket.end();
+        return;
+      }
       fs.readFile(`${directory}/${fileName}.txt`, "utf-8", (err, data) => {
-        if (err) {
-          socket.write(`HTTP/1.1 404 Not Found\r\n\r\n`);
-          return;
-        }
+        // if (err) {
+        //   socket.write(`HTTP/1.1 404 Not Found\r\n\r\n`);
+        //   return;
+        // }
         socket.write(
           `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length:${data.length}\r\n\r\n${data}`
         );
