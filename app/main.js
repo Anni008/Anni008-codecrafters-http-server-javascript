@@ -14,7 +14,10 @@ const server = net.createServer((socket) => {
     const requestData = data.toString();
     const requestLine = requestData.split("\r\n")[0];
     const urlPath = requestLine.split(" ")[1];
-    const content = urlPath.split("/")[1];
+
+    const content = urlPath.includes("echo")
+      ? urlPath.split("/")[2]
+      : urlPath.split("/")[1];
     console.log(urlPath);
     console.log(content);
 
