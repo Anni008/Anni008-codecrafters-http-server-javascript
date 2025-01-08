@@ -14,21 +14,19 @@ const server = net.createServer((socket) => {
     const requestData = data.toString();
     const requestLine = requestData.split("\r\n")[0];
     const urlPath = requestLine.split(" ")[1];
-
-    const content = urlPath.includes("echo")
-      ? urlPath.split("/")[2]
-      : urlPath.split("/")[1];
+    console.log(requestLine);
     console.log(urlPath);
-    console.log(content);
 
-    socket.write(
-      `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
-    );
-    // if (urlPath === "/") {
-    //   socket.write(`HTTP/1.1 200 OK\r\n\r\n`);
-    // } else {
-    //   socket.write(`HTTP/1.1 404 Not Found\r\n\r\n`);
-    // }
+    if (urlPath === "/") {
+      socket.write(`HTTP/1.1 200 OK\r\n\r\n`);
+    } else if (urlPath.includes("echo")) {
+      const content = urlPath.split("/")[2];
+      socket.write(
+        `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
+      );
+    } else {
+      socket.write(`HTTP/1.1 404 Not Found\r\n\r\n`);
+    }
   });
 });
 //
