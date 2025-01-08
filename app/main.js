@@ -1,4 +1,5 @@
 const net = require("net");
+const fs = require("fs");
 
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 console.log("Logs from your program will appear here!");
@@ -27,6 +28,19 @@ const server = net.createServer((socket) => {
       socket.write(
         `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${headerValue.length}\r\n\r\n${headerValue}`
       );
+    } else if (urlPath.includes("file")) {
+      const fileName = urlPath.split("/")[2];
+      const directory = process.argv[3];
+      console.log(directory);
+      fs.readFile(`${directory}/${fileName}.txt`, "utf-8", (err, data) => {
+        if (err) {
+          socket.write(`HTTP/1.1 404 Not Found\r\n\r\n`);
+          return;
+        }
+        socket.write(
+          `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length:${data.length}\r\n\r\n${data}`
+        );
+      });
     } else {
       socket.write(`HTTP/1.1 404 Not Found\r\n\r\n`);
     }
